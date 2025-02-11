@@ -176,7 +176,7 @@ namespace Snake
             for (int i = 3; i >= 1; i--)
             {
                 OverlayText.Text = i.ToString();
-                await Task.Delay(500);
+                await Task.Delay(250);
             }
         }
 

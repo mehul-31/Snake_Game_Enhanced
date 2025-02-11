@@ -15,6 +15,7 @@ namespace Snake
         public Direction Dir { get; private set; }
         public int score { get; private set; }
         public bool GameOver { get; private set; }
+        public int Speed { get; private set; } = 100; // Initial speed
 
         private readonly LinkedList<Direction> dirChanges = new LinkedList<Direction>();
         private readonly LinkedList<Position> snakePosition = new LinkedList<Position>();
@@ -38,8 +39,6 @@ namespace Snake
             {
                 Grid[r, c] = GridValue.Snake;
                 snakePosition.AddFirst(new Position(r, c));
-
-
             }
         }
 
@@ -49,10 +48,14 @@ namespace Snake
             {
                 for (int c = 0; c < Columns; c++)
                 {
-                    yield return new Position(r, c);
+                    if (Grid[r, c] == GridValue.Empty) // Only return empty spaces
+                    {
+                        yield return new Position(r, c);
+                    }
                 }
             }
         }
+
 
         private void AddFood()
         {
@@ -65,7 +68,6 @@ namespace Snake
 
             Position pos = empty[random.Next(empty.Count)];
             Grid[pos.Row, pos.Column] = GridValue.Food;
-
         }
 
         public Position HeadPosition()
@@ -98,7 +100,7 @@ namespace Snake
 
         public Direction GetLastDirection()
         {
-            if(dirChanges.Count == 0)
+            if (dirChanges.Count == 0)
             {
                 return Dir;
             }
@@ -142,14 +144,12 @@ namespace Snake
                 return GridValue.Empty;
             }
 
-
             return Grid[newHeadPos.Row, newHeadPos.Column];
         }
 
         public void Move()
         {
-
-            if (dirChanges.Count > 0) 
+            if (dirChanges.Count > 0)
             {
                 Dir = dirChanges.First.Value;
                 dirChanges.RemoveFirst();
@@ -171,6 +171,15 @@ namespace Snake
                 AddHead(newHeadPos);
                 score++;
                 AddFood();
+                IncreaseSpeed(); // Increase speed when food is eaten
+            }
+        }
+
+        private void IncreaseSpeed()
+        {
+            if (Speed > 50) // Set a lower limit for speed
+            {
+                Speed -= 5; // Increase game speed
             }
         }
     }
